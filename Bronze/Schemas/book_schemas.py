@@ -70,4 +70,46 @@ editionSchema = StructType([
             ]),True)
     ])
 
+authorSchema = StructType([
+        StructField("key",StringType(),False),
+        StructField("name",StringType(),False),
+        StructField("type",StructType([
+                StructField("key",StringType(),False)
+            ])),
+        StructField("alternate_names",ArrayType(StringType()),True),
+        StructField("bio",StructType([
+                StructField("key",StringType(),False),
+                StructField("value",StringType(),False)
+            ]),True),
+        StructField("birth_date",StringType(),True),
+        StructField("death_date",StringType(),True),
+        StructField("location",StringType(),True),
+        StructField("date",StringType(),True),
+        StructField("entity_type",StringType(),True),
+        StructField("fuller_name",StringType(),True),
+        StructField("personal_name",StringType(),True),
+        StructField("title",StringType(),True),
+        StructField("photos",ArrayType(LongType()),True),
+        StructField("links",ArrayType(StructType([
+                StructField("url",StringType(),False),
+                StructField("title",StringType(),False),
+                StructField("type",StructType([
+                        StructField("key",StringType(),False),
+                    ]),True),
+            ]),True)),
+        StructField("remote_ids",StructType([
+                StructField("wikidata",StringType(),False),
+                StructField("viaf",StringType(),False),
+            ]),True),
+        StructField("revision",LongType(),True),
+        StructField("latest_revision",LongType(),True),
+        StructField("created",StructType([
+                StructField("type",StringType(),False),
+                StructField("value",StringType(),False),
+            ]),True),
+        StructField("last_modified",StructType([
+                StructField("type",StringType(),False),
+                StructField("value",StringType(),False),
+            ]),True)
+    ])
 
