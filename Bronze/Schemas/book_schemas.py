@@ -112,4 +112,3 @@ authorSchema = StructType([
                 StructField("value",StringType(),False),
             ]),True)
     ])
-
