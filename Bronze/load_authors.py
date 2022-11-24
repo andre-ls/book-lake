@@ -1,8 +1,6 @@
-from dotenv import load_dotenv
 import os
-import json
+from dotenv import load_dotenv
 from pyspark.sql import SparkSession, functions as f
-from pyspark.sql.types import StructType,StringType
 from Schemas.book_schemas import authorSchema
 
 load_dotenv()
