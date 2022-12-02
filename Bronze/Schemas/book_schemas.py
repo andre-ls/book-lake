@@ -47,25 +47,20 @@ editionSchema = StructType([
         StructField("work_titles",ArrayType(StringType()),True),
         StructField("table_of_contents",ArrayType(StringType()),True),
         StructField("description",StructType([
-                StructField("type",StringType(),False),
                 StructField("value",StringType(),False),
             ]),True),
         StructField("first_sentence",StructType([
-                StructField("type",StringType(),False),
                 StructField("value",StringType(),False),
             ]),True),
         StructField("notes",StructType([
-                StructField("type",StringType(),False),
                 StructField("value",StringType(),False),
             ]),True),
         StructField("revision",LongType(),True),
         StructField("latest_revision",LongType(),True),
         StructField("created",StructType([
-                StructField("type",StringType(),False),
                 StructField("value",StringType(),False),
             ]),True),
         StructField("last_modified",StructType([
-                StructField("type",StringType(),False),
                 StructField("value",StringType(),False),
             ]),True)
     ])
@@ -104,11 +99,11 @@ authorSchema = StructType([
         StructField("revision",LongType(),True),
         StructField("latest_revision",LongType(),True),
         StructField("created",StructType([
-                StructField("type",StringType(),False),
+#                StructField("type",StringType(),False),
                 StructField("value",StringType(),False),
             ]),True),
         StructField("last_modified",StructType([
-                StructField("type",StringType(),False),
+#                StructField("type",StringType(),False),
                 StructField("value",StringType(),False),
             ]),True)
     ])

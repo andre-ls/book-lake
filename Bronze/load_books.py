@@ -1,6 +1,8 @@
 import os
+import re
 from dotenv import load_dotenv
 from pyspark.sql import SparkSession, functions as f
+from pyspark.sql.types import StringType
 from Schemas.book_schemas import editionSchema
 
 load_dotenv()
@@ -12,10 +14,22 @@ df = spark.read.option("inferSchema","true").text(dataDirectory + "/History/ol_d
 @f.udf(returnType = StringType())
 def cleanRow(row):
     if '{' in row:
-        return row[row.find('{'):]
+        row = row[row.find('{'):]
+        return re.sub(r"/[{}]|(\/\w*\/)/gm","",row)
 
-cleaned_df = df.select(cleanRow(f.col('value')).alias("book"))
-json_df = cleaned_df.withColumn("jsonData",f.from_json(f.col("book"),editionSchema)).select("jsonData.*")
+def extractJsonData(df):
+    cleaned_df = df.select(cleanRow(f.col('value')).alias("book"))
+    return cleaned_df.withColumn("jsonData",f.from_json(f.col("book"),editionSchema)).select("jsonData.*")
 
-json_df.write.option("mode","overwrite").parquet(dataDirectory + "/Bronze/books")
+def removeBooksWithoutIsbn(df):
+    return df.where(df.isbn_10.isNotNull() | df.isbn_13.isNotNull())
+
+def removeEmptyColumns(df):
+    return df.drop('ocaid','links','weight','edition_name','physical_dimensions','genres','work_titles','table_of_contents','description','first_sentence')
+
+df = extractJsonData(df)
+df = removeBooksWithoutIsbn(df)
+df = removeEmptyColumns(df)
+
+df.write.option("mode","overwrite").parquet(dataDirectory + "/Bronze/books")
 
