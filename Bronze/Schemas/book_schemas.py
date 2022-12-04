@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession, functions as f
-from pyspark.sql.types import StructType,StructField,StringType,MapType,ArrayType,LongType
+from pyspark.sql.types import StructType,StructField,StringType,MapType,ArrayType,LongType, DateType
 
 spark = SparkSession.builder.appName("Book Schemas").getOrCreate()
 
@@ -58,10 +58,10 @@ editionSchema = StructType([
         StructField("revision",LongType(),True),
         StructField("latest_revision",LongType(),True),
         StructField("created",StructType([
-                StructField("value",StringType(),False),
-            ]),True),
+               StructField("value",DateType(),False),
+           ]),True),
         StructField("last_modified",StructType([
-                StructField("value",StringType(),False),
+                StructField("value",DateType(),False),
             ]),True)
     ])
 

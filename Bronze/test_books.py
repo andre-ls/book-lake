@@ -9,7 +9,7 @@ spark = SparkSession.builder.appName("Book Test").getOrCreate()
 #df = spark.read.option("inferSchema","true").parquet(dataDirectory + "/Bronze/books")
 df = spark.read.option("inferSchema","true").text(dataDirectory + "/History/ol_dump_editions_2022-10-31.txt")
 
-#df.printSchema()
+df.printSchema()
 df.show(truncate=False)
 print("Total Rows: " + str(df.count()))
 #df.select([f.count(f.when(f.col(c).isNull(), c)).alias(c) for c in df.columns]).show(vertical=True,truncate=False)
