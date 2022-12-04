@@ -99,11 +99,9 @@ authorSchema = StructType([
         StructField("revision",LongType(),True),
         StructField("latest_revision",LongType(),True),
         StructField("created",StructType([
-#                StructField("type",StringType(),False),
-                StructField("value",StringType(),False),
+                StructField("value",DateType(),False),
             ]),True),
         StructField("last_modified",StructType([
-#                StructField("type",StringType(),False),
-                StructField("value",StringType(),False),
+                StructField("value",DateType(),False),
             ]),True)
     ])
