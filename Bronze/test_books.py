@@ -12,7 +12,7 @@ df = spark.read.option("inferSchema","true").parquet(dataDirectory + "/Bronze/bo
 
 df = df.withColumn("isbn",f.when(df.isbn_13.isNotNull(),df.isbn_13)\
                              .otherwise(df.isbn_10))
-df.foreach(lambda x: print(x.isbn[0]))
+df.where(f.size(f.col("isbn")) > 0).show(vertical=True)
 
 #df.printSchema()
 #df.show(truncate=False)

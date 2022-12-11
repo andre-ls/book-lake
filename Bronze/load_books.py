@@ -22,7 +22,8 @@ def extractJsonData(df):
     return cleaned_df.withColumn("jsonData",f.from_json(f.col("book"),editionSchema)).select("jsonData.*")
 
 def removeBooksWithoutIsbn(df):
-    return df.where(df.isbn_10.isNotNull() | df.isbn_13.isNotNull())
+    df = df.where(df.isbn_10.isNotNull() | df.isbn_13.isNotNull())
+    return df.where((f.size(f.col("isbn_10")) > 0) | (f.size(f.col("isbn_13")) > 0))
 
 def removeEmptyColumns(df):
     return df.drop('ocaid','links','weight','edition_name','physical_dimensions','genres','work_titles','table_of_contents','description','first_sentence')
