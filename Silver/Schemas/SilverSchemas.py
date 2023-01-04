@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession, functions as f
-from pyspark.sql.types import StructType,StructField,StringType,MapType,ArrayType,LongType,DateType,BooleanType, DoubleType
+from pyspark.sql.types import StructType,StructField,StringType,MapType,ArrayType,LongType,DateType,BooleanType, DoubleType 
 
 spark = SparkSession.builder.appName("Silver Schemas").getOrCreate()
 
