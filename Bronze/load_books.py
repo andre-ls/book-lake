@@ -25,23 +25,19 @@ def removeBooksWithoutIsbn(df):
     df = df.where(df.isbn_10.isNotNull() | df.isbn_13.isNotNull())
     return df.where((f.size(f.col("isbn_10")) > 0) | (f.size(f.col("isbn_13")) > 0))
 
-def removeEmptyColumns(df):
-    return df.drop('ocaid','links','weight','edition_name','physical_dimensions','genres','work_titles','table_of_contents','description','first_sentence')
+def formatIsbnColumns(df):
+    df = df.withColumn("isbn_10",f.col("isbn_10").getItem(0))
+    df = df.withColumn("isbn_13",f.col("isbn_13").getItem(0))
+    return df.withColumn("isbn",f.when(df.isbn_13.isNotNull(),df.isbn_13)\
+                                 .otherwise(df.isbn_10))
 
-def extractSingleValueColumns(df):
-    df = df.withColumn("type",f.col("type.key"))
-    df = df.withColumn("created",f.col("created.value"))
-    df = df.withColumn("last_modified",f.col("last_modified.value"))
-    df = df.withColumn("authors",f.col("authors.key"))
-    df = df.withColumn("works",f.col("works.key"))
-    df = df.withColumn("languages",f.col("languages.key"))
-
-    return df
+def filterColumns(df):
+    return df.select("key","title","isbn_10","isbn_13","isbn")
 
 df = extractJsonData(df)
 df = removeBooksWithoutIsbn(df)
-df = removeEmptyColumns(df)
-df = extractSingleValueColumns(df)
+df = formatIsbnColumns(df)
+df = filterColumns(df)
 
-df.write.option("mode","overwrite").parquet(dataDirectory + "/Bronze/books")
+df.write.mode("overwrite").parquet(dataDirectory + "/Bronze/books")
 

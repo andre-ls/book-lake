@@ -10,12 +10,12 @@ df = spark.read.option("inferSchema","true").parquet(dataDirectory + "/Bronze/bo
 #df = spark.read.option("inferSchema","true").text(dataDirectory + "/History/ol_dump_ratings_2022-10-31.txt")
 
 
-df = df.withColumn("isbn",f.when(df.isbn_13.isNotNull(),df.isbn_13)\
-                             .otherwise(df.isbn_10))
-df.where(f.size(f.col("isbn")) > 0).show(vertical=True)
+#df = df.withColumn("isbn",f.when(df.isbn_13.isNotNull(),df.isbn_13)\
+#                             .otherwise(df.isbn_10))
+#df.where(f.size(f.col("isbn")) > 0).show(vertical=True)
 
-#df.printSchema()
-#df.show(truncate=False)
-#print("Total Rows: " + str(df.count()))
+df.printSchema()
+df.show(vertical=True,truncate=False)
+print("Total Rows: " + str(df.count()))
 #df.select([f.count(f.when(f.col(c).isNull(), c)).alias(c) for c in df.columns]).show(vertical=True,truncate=False)
 #print(df.where(df.isbn_10.isNull() & df.isbn_13.isNull()).count())
