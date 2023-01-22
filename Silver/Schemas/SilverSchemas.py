@@ -98,6 +98,7 @@ volumeSchema = StructType([
     ])
 
 googleSchema = StructType([
+        StructField("isbn",StringType(),False),
         StructField("kind",StringType(),False),
         StructField("totalItems",LongType(),False),
         StructField("items",ArrayType(volumeSchema),False)
