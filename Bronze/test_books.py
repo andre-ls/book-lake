@@ -15,7 +15,7 @@ df = spark.read.option("inferSchema","true").parquet(dataDirectory + "/Bronze/bo
 #df.where(f.size(f.col("isbn")) > 0).show(vertical=True)
 
 df.printSchema()
-df.show(vertical=True,truncate=False)
+df.show(n=500,vertical=True,truncate=False)
 print("Total Rows: " + str(df.count()))
 #df.select([f.count(f.when(f.col(c).isNull(), c)).alias(c) for c in df.columns]).show(vertical=True,truncate=False)
 #print(df.where(df.isbn_10.isNull() & df.isbn_13.isNull()).count())

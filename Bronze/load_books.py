@@ -26,8 +26,8 @@ def removeBooksWithoutIsbn(df):
     return df.where((f.size(f.col("isbn_10")) > 0) | (f.size(f.col("isbn_13")) > 0))
 
 def formatIsbnColumns(df):
-    df = df.withColumn("isbn_10",f.col("isbn_10").getItem(0))
-    df = df.withColumn("isbn_13",f.col("isbn_13").getItem(0))
+    df = df.withColumn("isbn_10",f.regexp_replace(f.col("isbn_10").getItem(0), "[^\dX+]", ""))
+    df = df.withColumn("isbn_13",f.regexp_replace(f.col("isbn_13").getItem(0), "[^\dX+]", ""))
     return df.withColumn("isbn",f.when(df.isbn_13.isNotNull(),df.isbn_13)\
                                  .otherwise(df.isbn_10))
 
