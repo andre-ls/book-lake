@@ -7,7 +7,20 @@ from Schemas.book_schemas import editionSchema
 
 load_dotenv()
 dataDirectory = os.environ.get('DATA_DIRECTORY')
+awsAccessKey = os.environ.get('AWS_ACCESS_KEY')
+awsAccessSecret = os.environ.get('AWS_ACCESS_SECRET')
+awsS3Directory = os.environ.get('AWS_S3_DIRECTORY')
+
 spark = SparkSession.builder.appName("Book Historical Load").getOrCreate()
+
+spark.sparkContext\
+     ._jsc.hadoopConfiguration().set("fs.s3a.access.key", awsAccessKey)
+spark.sparkContext\
+     ._jsc.hadoopConfiguration().set("fs.s3a.secret.key", awsAccessSecret)
+spark.sparkContext\
+      ._jsc.hadoopConfiguration().set("fs.s3a.endpoint", "s3.amazonaws.com")
+spark.sparkContext\
+      ._jsc.hadoopConfiguration().set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
 
 df = spark.read.option("inferSchema","true").text(dataDirectory + "/History/ol_dump_editions_2022-10-31.txt")
 
@@ -39,5 +52,5 @@ df = removeBooksWithoutIsbn(df)
 df = formatIsbnColumns(df)
 df = filterColumns(df)
 
-df.write.mode("overwrite").parquet(dataDirectory + "/Bronze/books")
+df.write.mode("overwrite").parquet(awsS3Directory + "/Bronze/books")
 

@@ -8,13 +8,24 @@ from Schemas.SilverSchemas import googleSchema
 
 load_dotenv()
 dataDirectory = os.environ.get('DATA_DIRECTORY')
+awsAccessKey = os.environ.get('AWS_ACCESS_KEY')
+awsAccessSecret = os.environ.get('AWS_ACCESS_SECRET')
+awsS3Directory = os.environ.get('AWS_S3_DIRECTORY')
+
 spark = SparkSession.builder.appName("Google Books Data Transform").getOrCreate()
-sparkContext = spark.sparkContext
 
-path = dataDirectory + "/Silver/googleBooksRaw"
 
-def readData(path):
-    data = spark.read.schema(googleSchema).json(path)
+spark.sparkContext\
+     ._jsc.hadoopConfiguration().set("fs.s3a.access.key", awsAccessKey)
+spark.sparkContext\
+     ._jsc.hadoopConfiguration().set("fs.s3a.secret.key", awsAccessSecret)
+spark.sparkContext\
+      ._jsc.hadoopConfiguration().set("fs.s3a.endpoint", "s3.amazonaws.com")
+spark.sparkContext\
+      ._jsc.hadoopConfiguration().set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+
+def readData():
+    data = spark.read.schema(googleSchema).json(awsS3Directory + "/Silver/googleBooksRaw")
     return data
 
 def processGoogleData(data):
@@ -94,9 +105,9 @@ def flatten(schema, prefix=None):
     return fields
 
 def saveData(df):
-    df.write.mode("overwrite").parquet(dataDirectory + "/Silver/googleBooks")
+    df.write.mode("overwrite").parquet(awsS3Directory + "/Silver/googleBooks")
 
-df = readData(path)
+df = readData()
 df = processGoogleData(df)
 saveData(df)
 

@@ -6,11 +6,23 @@ from pyspark.sql import SparkSession, functions as f
 
 load_dotenv()
 dataDirectory = os.environ.get('DATA_DIRECTORY')
+awsAccessKey = os.environ.get('AWS_ACCESS_KEY')
+awsAccessSecret = os.environ.get('AWS_ACCESS_SECRET')
+awsS3Directory = os.environ.get('AWS_S3_DIRECTORY')
+
 spark = SparkSession.builder.appName("Authors View").getOrCreate()
-sparkContext = spark.sparkContext
+
+spark.sparkContext\
+     ._jsc.hadoopConfiguration().set("fs.s3a.access.key", awsAccessKey)
+spark.sparkContext\
+     ._jsc.hadoopConfiguration().set("fs.s3a.secret.key", awsAccessSecret)
+spark.sparkContext\
+      ._jsc.hadoopConfiguration().set("fs.s3a.endpoint", "s3.amazonaws.com")
+spark.sparkContext\
+      ._jsc.hadoopConfiguration().set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
 
 def readData():
-    path = dataDirectory + "/Silver/googleBooks"
+    path = awsS3Directory + "/Silver/googleBooks"
     data = spark.read.option("inferSchema","true").parquet(path)
     return data
 
@@ -27,8 +39,10 @@ def processData(data):
     data = data.where(f.col("publisher").isNotNull())
     return data
 
+def saveData(df):
+    df.write.mode("overwrite").parquet(awsS3Directory + "/Gold/publishersView")
+
 df = readData()
-print(">> Total Rows: " + str(df.count()))
 df = processData(df)
-print(">> Total Rows: " + str(df.count()))
+saveData(df)
 df.show(n=5,vertical=True,truncate=False)
