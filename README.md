@@ -1,4 +1,4 @@
-# Ohara
+# Book Lake Project
 
 ## Project Objectives
 
